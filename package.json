@@ -1,0 +1,22 @@
+{
+  "name": "pizzaria-back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adailton90/pizzaria-back-end.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adailton90/pizzaria-back-end/issues"
+  },
+  "homepage": "https://github.com/Adailton90/pizzaria-back-end#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
