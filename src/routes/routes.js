@@ -4,16 +4,10 @@ const userController = require('../controller/userController')
 
 
 router.get('/users', userController.listAllUsers)
-
 router.get('/users/:id',userController.listUsersID)
+router.post('/user', userController.createUser)
 
-router.post('/users', userController.createUser)
-
-router.put('/users/:id',(req, res) =>{
-  res.json({list: 'users'})
-})
-router.delete('/users',(req, res) =>{
-  res.json({list: 'users'})
-})
+router.put('/users/:id',userController.updateUser)
+router.delete('/user/:id',userController.deleteUser)
 
 module.exports = router
