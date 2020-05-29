@@ -1,6 +1,7 @@
 const { usuarios } = require('../../app/models/')
 const bcrypt = require ('bcrypt')
 const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 salt = bcrypt.genSaltSync(10)
 
@@ -29,6 +30,7 @@ class userController{
     })
     user.senha = senhaHash
     await usuarios.create(user)
+
     console.log(`Usuário ${user.nome} criado com sucesso!!`)
     return res.status(200).send("Usuário criado com sucesso!!")
   } 
@@ -40,34 +42,44 @@ class userController{
   
   async updateUser(req, res){
     const user =  await usuarios.findByPk(req.params.id, {attributes: ["id","nome","email","senha"]})
-    const checkPassword = await bcrypt.compare(req.body.antingaSenha, user.senha)
-   
-    
+    const checkPassword = await bcrypt.compare(req.body.antigasenha, user.senha)
+        
     if (!checkPassword){
-      res.status(401).send("Senha anterior nao confere")
-    }else{
-      await usuarios.update(req.body ,{where: {id: req.params.id}})
-      return res.status(200).send("Usuário atualizado com sucesso!!")
-    }    
+      return res.status(401).send("Senha anterior nao confere")
+    }
+    
+    req.body.senha = bcrypt.hashSync(req.body.senha, salt, (errBcrypt, hash)=>{
+      return res.status(500).json({error: errBcrypt})
+    })
+    await usuarios.update(req.body ,{where: {id: req.params.id}})
+    return res.status(200).send("Usuário atualizado com sucesso!!")
+        
     
   }
 
   async loginUser(req,res){
-    const checkUser = await usuarios.findOne({ where: { email: req.body.email } })
-    const checkPassword = await bcrypt.compare(req.body.senha, checkUser.senha)
+    const checkUser = await usuarios.findOne({ where: { email: req.body.email }})
     if(!checkUser){
       return res.status(401).send("Falha na autenticação")
     }
+    
+    const checkPassword = await bcrypt.compare(req.body.senha, checkUser.senha)
+    
     if(!checkPassword){
       return res.status(401).send("Falha na autenticação")
     }
     
-    let token = jwt.sign({
+    const token = jwt.sign({
       id: checkUser.id,
       email: checkUser.email,
-      
+
+    },
+    process.env.JWT_KEY,
+    {
+      expiresIn: "2h"
     })
-    return res.status(200).send("Autenticado com sucesso!!")
+
+    return res.status(200).send({message:"Autenticado com sucesso!!", token:token})
   }
 }
 
