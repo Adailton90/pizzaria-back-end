@@ -1,6 +1,7 @@
 const { usuarios } = require('../../app/models/')
 const bcrypt = require ('bcrypt')
 const jwt = require('jsonwebtoken')
+const login = require('../../middleware/login')
 require('dotenv').config()
 
 salt = bcrypt.genSaltSync(10)
